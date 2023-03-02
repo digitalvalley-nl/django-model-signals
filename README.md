@@ -1,8 +1,7 @@
 # Django Model Signals
 
-Django Model Signals makes it easier to keep model related business logic in
-your Django models by allowing them to become transceivers of their own
-signals.
+Django Model Signals makes it easier to keep business logic in your Django
+models by allowing them to become transceivers of their own signals.
 
 ## Installation
 
