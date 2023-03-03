@@ -1,4 +1,4 @@
-class ModelSignalTransceiver:
+class ModelSignalsTransceiver:
 
     def pre_init(self, **kwargs):
         pass
@@ -21,5 +21,5 @@ class ModelSignalTransceiver:
     def m2m_changed(self, **kwargs):
         pass
 
-    class ModelSignalMeta:
+    class ModelSignalsMeta:
         signals = []

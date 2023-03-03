@@ -1,4 +1,4 @@
-class ModelSignalDispatcher:
+class ModelSignalsDispatcher:
 
     @staticmethod
     def pre_init(sender, **kwargs):

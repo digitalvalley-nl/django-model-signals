@@ -21,7 +21,7 @@ INSTALLED_APPS = [
 
 ## Usage
 
-- Add the `ModelSignalTransceiver` class to your Django model.
+- Add the `ModelSignalsTransceiver` class to your Django model.
 - Add a `ModelSignalsMeta` inner class to your Django model and specify which
 signals you're interested in.
 - Implement the signal receiver methods in your Django model.
@@ -29,10 +29,10 @@ signals you're interested in.
 ## Example
 ```python
 from django.db.models import Model
-from django_model_signals import ModelSignalTransceiver
+from django_model_signals import ModelSignalsTransceiver
 
 class MyModel(
-    ModelSignalTransceiver,
+    ModelSignalsTransceiver,
     Model
 ):
 

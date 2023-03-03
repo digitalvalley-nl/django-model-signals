@@ -11,8 +11,8 @@ from django.db.models.signals import (
 )
 
 # Django Model Signals
-from django_model_signals.dispatcher import ModelSignalDispatcher
-from django_model_signals.transceiver import ModelSignalTransceiver
+from django_model_signals.dispatcher import ModelSignalsDispatcher
+from django_model_signals.transceiver import ModelSignalsTransceiver
 
 
 class DjangoModelSignalsConfig(AppConfig):
@@ -21,18 +21,18 @@ class DjangoModelSignalsConfig(AppConfig):
     def ready(self):
         models = apps.get_models()
         for model in models:
-            if issubclass(model, ModelSignalTransceiver):
+            if issubclass(model, ModelSignalsTransceiver):
                 if 'pre_init' in model.ModelSignalsMeta.signals:
-                    pre_init.connect(ModelSignalDispatcher.pre_init)
+                    pre_init.connect(ModelSignalsDispatcher.pre_init)
                 if 'post_init' in model.ModelSignalsMeta.signals:
-                    post_init.connect(ModelSignalDispatcher.post_init)
+                    post_init.connect(ModelSignalsDispatcher.post_init)
                 if 'pre_save' in model.ModelSignalsMeta.signals:
-                    pre_save.connect(ModelSignalDispatcher.pre_save)
+                    pre_save.connect(ModelSignalsDispatcher.pre_save)
                 if 'post_save' in model.ModelSignalsMeta.signals:
-                    post_save.connect(ModelSignalDispatcher.post_save)
+                    post_save.connect(ModelSignalsDispatcher.post_save)
                 if 'pre_delete' in model.ModelSignalsMeta.signals:
-                    pre_delete.connect(ModelSignalDispatcher.pre_delete)
+                    pre_delete.connect(ModelSignalsDispatcher.pre_delete)
                 if 'post_delete' in model.ModelSignalsMeta.signals:
-                    post_delete.connect(ModelSignalDispatcher.post_delete)
+                    post_delete.connect(ModelSignalsDispatcher.post_delete)
                 if 'm2m_changed' in model.ModelSignalsMeta.signals:
-                    m2m_changed.connect(ModelSignalDispatcher.m2m_changed)
+                    m2m_changed.connect(ModelSignalsDispatcher.m2m_changed)
