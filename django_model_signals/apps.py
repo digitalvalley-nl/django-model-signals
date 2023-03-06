@@ -1,3 +1,6 @@
+# Python Standard Library
+import sys
+
 # Django
 from django.apps import apps, AppConfig
 from django.db.models.signals import (
@@ -19,6 +22,11 @@ class DjangoModelSignalsConfig(AppConfig):
     name = 'django_model_signals'
 
     def ready(self):
+
+        # Don't bind signals when applying migrations
+        if 'manage.py' in sys.argv and 'migrate' in sys.argv:
+            return
+
         models = apps.get_models()
         for model in models:
             if issubclass(model, ModelSignalsTransceiver):
