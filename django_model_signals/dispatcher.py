@@ -27,3 +27,11 @@ class ModelSignalsDispatcher:
     @staticmethod
     def m2m_changed(sender, **kwargs):
         kwargs['instance'].m2m_changed(**kwargs)
+
+    @staticmethod
+    def pre_bulk_save(sender, **kwargs):
+        sender.pre_bulk_save(**kwargs)
+
+    @staticmethod
+    def post_bulk_save(sender, **kwargs):
+        sender.post_bulk_save(**kwargs)

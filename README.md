@@ -1,7 +1,8 @@
 # Django Model Signals
 
 Django Model Signals makes it easier to keep business logic in your Django
-models by allowing them to become transceivers of their own signals.
+models by allowing them to become transceivers of their own signals, including
+bulk signals.
 
 ## Installation
 
@@ -24,12 +25,16 @@ INSTALLED_APPS = [
 - Add the `ModelSignalsTransceiver` class to your Django model.
 - Add a `ModelSignalsMeta` inner class to your Django model and specify which
 signals you're interested in.
+- Add the `ModelSignalsManager` to your Django model's `objects` property to
+receive bulk signals.
 - Implement the signal receiver methods in your Django model.
+
 
 ## Example
 ```python
 from django.db.models import Model
-from django_model_signals import ModelSignalsTransceiver
+from django_model_signals.manager import ModelSignalsManager
+from django_model_signals.transceiver import ModelSignalsTransceiver
 
 class MyModel(
     ModelSignalsTransceiver,
@@ -57,6 +62,16 @@ class MyModel(
     def m2m_changed(self, **kwargs):
         pass
 
+    @classmethod
+    def pre_bulk_save(cls, **kwargs):
+      pass
+
+    @classmethod
+    def post_bulk_save(cls, **kwargs):
+      pass
+
+    objects = ModelSignalsManager()
+
     class ModelSignalsMeta:
         signals = [
             'pre_init',
@@ -65,7 +80,9 @@ class MyModel(
             'post_save',
             'pre_delete',
             'post_delete',
-            'm2m_changed'
+            'm2m_changed',
+            'pre_bulk_save',
+            'post_bulk_save'
         ]
 ```
 

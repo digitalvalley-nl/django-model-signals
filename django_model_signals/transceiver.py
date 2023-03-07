@@ -21,5 +21,13 @@ class ModelSignalsTransceiver:
     def m2m_changed(self, **kwargs):
         pass
 
+    @classmethod
+    def pre_bulk_save(cls, **kwargs):
+      pass
+
+    @classmethod
+    def post_bulk_save(cls, **kwargs):
+      pass
+
     class ModelSignalsMeta:
         signals = []

@@ -4,11 +4,11 @@ build-backend = "hatchling.build"
 
 [project]
 name = "django-model-signals"
-version = "0.1.2"
+version = "0.2.0"
 authors = [
   { name="Digital Valley", email="techteam@digitalvalley.nl" }
 ]
-description = "Django Model Signals makes it easier to keep model related business logic in your Django models by allowing them to become transceivers of their own signals."
+description = "Django Model Signals makes it easier to keep model related business logic in your Django models by allowing them to become transceivers of their own signals, including bulk signals."
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [
