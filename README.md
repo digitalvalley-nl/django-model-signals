@@ -26,7 +26,7 @@ INSTALLED_APPS = [
 - Add a `ModelSignalsMeta` inner class to your Django model and specify which
 signals you're interested in.
 - Add the `ModelSignalsManager` to your Django model's `objects` property to
-receive bulk signals.
+enable bulk signals.
 - Implement the signal receiver methods in your Django model.
 
 
@@ -41,10 +41,17 @@ class MyModel(
     Model
 ):
 
-    def pre_init(self, **kwargs):
+    @classmethod
+    def pre_init(cls, **kwargs):
         pass
 
     def post_init(self, **kwargs):
+        pass
+
+    def pre_full_clean(self, **kwargs):
+        pass
+
+    def post_full_clean(self, **kwargs):
         pass
 
     def pre_save(self, **kwargs):
@@ -76,6 +83,8 @@ class MyModel(
         signals = [
             'pre_init',
             'post_init',
+            'pre_full_clean',
+            'post_full_clean',
             'pre_save',
             'post_save',
             'pre_delete',
@@ -85,6 +94,26 @@ class MyModel(
             'post_bulk_save'
         ]
 ```
+
+## Notes
+
+- The following actions are supported for triggering the implemented signals:
+  - Creating or loading an model instance from the database will trigger the `pre_init` and `post_init` signals.
+  - Calling `Model.full_clean` will trigger the `pre_full_clean` and `post_full_clean` signals.
+  - Calling `Model.save` will trigger the `pre_save` and `post_save` signals.
+  - Calling `Model.delete` will trigger the `pre_delete` and `post_delete` signals.
+  - Calling `Model.objects.create` will trigger the `pre_save` and `post_save` signals.
+  - Calling `Model.objects.get_or_create` will trigger the `pre_save` and `post_save` signals.
+  - Calling `Model.objects.update_or_create` will trigger the `pre_save` and `post_save` signals.
+  - Calling `Model.objects.bulk_create` will trigger the `pre_bulk_save` and `post_bulk_save` signals.
+  - Calling `Model.objects.bulk_update` will trigger the `pre_bulk_save` and `post_bulk_save` signals.
+  - Calling `QuerySet.delete` will trigger the `pre_delete` and `post_delete` signals.
+
+- To implement the `pre_full_clean` and `post_full_clean` signals, this library
+  overrides the `full_clean` method of Django models and calls the original
+  method in a backwards compatible way. However, make sure the order of the
+  classes inherited from is the same as the above example to ensure the proper
+  method resolution order.
 
 ## Resources
 

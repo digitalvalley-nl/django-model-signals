@@ -1,37 +1,20 @@
+# Python standard library
+from functools import partial
+
+# Django Model Signals
+from django_model_signals.transceiver import ModelSignalsTransceiver
+
+
 class ModelSignalsDispatcher:
 
     @staticmethod
-    def pre_init(sender, **kwargs):
-        kwargs['instance'].pre_init(**kwargs)
+    def signal_method(signal_name, sender, **kwargs):
+        if 'instance' in kwargs \
+            and isinstance(kwargs['instance'], ModelSignalsTransceiver):
+            getattr(kwargs['instance'], signal_name)(**kwargs)
+        elif issubclass(sender, ModelSignalsTransceiver):
+            getattr(sender, signal_name)(**kwargs)
 
-    @staticmethod
-    def post_init(sender, **kwargs):
-        kwargs['instance'].post_init(**kwargs)
-
-    @staticmethod
-    def pre_save(sender, **kwargs):
-        kwargs['instance'].pre_save(**kwargs)
-
-    @staticmethod
-    def post_save(sender, **kwargs):
-        kwargs['instance'].post_save(**kwargs)
-
-    @staticmethod
-    def pre_delete(sender, **kwargs):
-        kwargs['instance'].pre_delete(**kwargs)
-
-    @staticmethod
-    def post_delete(sender, **kwargs):
-        kwargs['instance'].post_delete(**kwargs)
-
-    @staticmethod
-    def m2m_changed(sender, **kwargs):
-        kwargs['instance'].m2m_changed(**kwargs)
-
-    @staticmethod
-    def pre_bulk_save(sender, **kwargs):
-        sender.pre_bulk_save(**kwargs)
-
-    @staticmethod
-    def post_bulk_save(sender, **kwargs):
-        sender.post_bulk_save(**kwargs)
+    @classmethod
+    def get_signal_method(cls, name):
+        return partial(cls.signal_method, signal_name=name)
