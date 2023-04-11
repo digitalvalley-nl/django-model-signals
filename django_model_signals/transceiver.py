@@ -16,11 +16,17 @@ class ModelSignalsTransceiver:
     def post_full_clean(self, **kwargs):
         pass
 
+    def post_full_clean_error(self, **kwargs):
+        raise kwargs['error']
+
     def pre_save(self, **kwargs):
         pass
 
     def post_save(self, **kwargs):
         pass
+
+    def post_save_error(self, **kwargs):
+        raise kwargs['error']
 
     def pre_delete(self, **kwargs):
         pass
@@ -32,16 +38,30 @@ class ModelSignalsTransceiver:
         pass
 
     def full_clean(self, *args, **kwargs):
-        signal_kwargs = {
-            'instance': self
-        }
-        if 'pre_full_clean' in self.ModelSignalsMeta.signals:
-            pre_full_clean.send(sender=self.__class__, **signal_kwargs)
-        result = super().full_clean(*args, **kwargs)
-        signal_kwargs['result'] = result
-        if 'post_full_clean' in self.ModelSignalsMeta.signals:
-            post_full_clean.send(sender=self.__class__, **signal_kwargs)
-        return result
+        try:
+            signal_kwargs = {
+                'instance': self
+            }
+            if 'pre_full_clean' in self.ModelSignalsMeta.signals:
+                pre_full_clean.send(sender=self.__class__, **signal_kwargs)
+            super().full_clean(*args, **kwargs)
+            if 'post_full_clean' in self.ModelSignalsMeta.signals:
+                post_full_clean.send(sender=self.__class__, **signal_kwargs)
+            return True
+        except Exception as error:
+            if 'post_full_clean_error' in self.ModelSignalsMeta.signals:
+                return self.post_full_clean_error(error, self.pk is None)
+            else:
+                raise error
+
+    def save(self, **kwargs):
+        try:
+            super().save()
+        except Exception as error:
+            if 'post_save_error' in self.ModelSignalsMeta.signals:
+                self.post_save_error(error, self.pk is None)
+            else:
+                raise error
 
     @classmethod
     def pre_bulk_save(cls, **kwargs):

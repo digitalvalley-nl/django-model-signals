@@ -54,11 +54,17 @@ class MyModel(
     def post_full_clean(self, **kwargs):
         pass
 
+    def post_full_clean_error(self, **kwargs):
+        raise kwargs['error']
+
     def pre_save(self, **kwargs):
         pass
 
     def post_save(self, **kwargs):
         pass
+
+    def post_save_error(self, **kwargs):
+        raise kwargs['error']
 
     def pre_delete(self, **kwargs):
         pass
@@ -98,22 +104,34 @@ class MyModel(
 ## Notes
 
 - The following actions are supported for triggering the implemented signals:
-  - Creating or loading an model instance from the database will trigger the `pre_init` and `post_init` signals.
-  - Calling `Model.full_clean` will trigger the `pre_full_clean` and `post_full_clean` signals.
+  - Creating or loading an model instance from the database will trigger the
+    `pre_init` and `post_init` signals.
+  - Calling `Model.full_clean` will trigger the `pre_full_clean` and
+    `post_full_clean` signals.
+  - An error during `Model.full_clean` will trigger the `post_full_clean_error`
+    signal.
   - Calling `Model.save` will trigger the `pre_save` and `post_save` signals.
-  - Calling `Model.delete` will trigger the `pre_delete` and `post_delete` signals.
-  - Calling `Model.objects.create` will trigger the `pre_save` and `post_save` signals.
-  - Calling `Model.objects.get_or_create` will trigger the `pre_save` and `post_save` signals.
-  - Calling `Model.objects.update_or_create` will trigger the `pre_save` and `post_save` signals.
-  - Calling `Model.objects.bulk_create` will trigger the `pre_bulk_save` and `post_bulk_save` signals.
-  - Calling `Model.objects.bulk_update` will trigger the `pre_bulk_save` and `post_bulk_save` signals.
-  - Calling `QuerySet.delete` will trigger the `pre_delete` and `post_delete` signals.
-
-- To implement the `pre_full_clean` and `post_full_clean` signals, this library
-  overrides the `full_clean` method of Django models and calls the original
-  method in a backwards compatible way. However, make sure the order of the
-  classes inherited from is the same as the above example to ensure the proper
-  method resolution order.
+  - An error during `Model.save` will trigger the `post_save_error` signal.
+  - Calling `Model.delete` will trigger the `pre_delete` and `post_delete`
+    signals.
+  - Calling `Model.objects.create` will trigger the `pre_save` and `post_save`
+    signals.
+  - Calling `Model.objects.get_or_create` will trigger the `pre_save` and
+    `post_save` signals.
+  - Calling `Model.objects.update_or_create` will trigger the `pre_save` and
+    `post_save` signals.
+  - Calling `Model.objects.bulk_create` will trigger the `pre_bulk_save` and
+    `post_bulk_save` signals.
+  - Calling `Model.objects.bulk_update` will trigger the `pre_bulk_save` and
+    `post_bulk_save` signals.
+  - Calling `QuerySet.delete` will trigger the `pre_delete` and `post_delete`
+    signals.
+- To implement the `pre_full_clean` and `post_full_clean`,
+  `post_full_clean_error` and `post_save_errors` signals, this library
+  overrides the `full_clean` and `save` methods of Django models and calls the
+  original method in a backwards compatible way. However, make sure the order
+  of the classes inherited from is the same as the above example to ensure the
+  proper method resolution order.
 
 ## Resources
 
