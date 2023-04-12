@@ -50,7 +50,10 @@ class ModelSignalsTransceiver:
             return True
         except Exception as error:
             if 'post_full_clean_error' in self.ModelSignalsMeta.signals:
-                return self.post_full_clean_error(error, self.pk is None)
+                return self.post_full_clean_error(
+                    error=error,
+                    created=self.pk is None
+                )
             else:
                 raise error
 
@@ -59,7 +62,10 @@ class ModelSignalsTransceiver:
             super().save()
         except Exception as error:
             if 'post_save_error' in self.ModelSignalsMeta.signals:
-                self.post_save_error(error, self.pk is None)
+                self.post_save_error(
+                    error=error,
+                    created=self.pk is None
+                )
             else:
                 raise error
 
