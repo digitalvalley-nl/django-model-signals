@@ -22,12 +22,16 @@ INSTALLED_APPS = [
 
 ## Usage
 
-- Add the `ModelSignalsTransceiver` class to your Django model.
 - Add a `ModelSignalsMeta` inner class to your Django model and specify which
-signals you're interested in.
-- Add the `ModelSignalsManager` to your Django model's `objects` property to
-enable bulk signals.
-- Implement the signal receiver methods in your Django model.
+signals you want to connect.
+- To enable the `pre_bulk_save` and `post_bulk_save` signals, add the
+  `ModelSignalsManager` to your Django model's `objects` property.
+- To enable the `pre_full_clean`, `post_full_clean` and `post_full_clean_error`
+  signals, inherit from the `FullCleanSignalsMixin` in your Django model.
+- To enable the `post_save_error` signal, inherit from the
+  `PostSaveErrorSignalMixin` in your Django model.
+- Implement the receiver methods for the connected signals in your Django
+  model.
 
 
 ## Example
@@ -37,7 +41,8 @@ from django_model_signals.manager import ModelSignalsManager
 from django_model_signals.transceiver import ModelSignalsTransceiver
 
 class MyModel(
-    ModelSignalsTransceiver,
+    FullCleanSignalsMixin,
+    PostSaveErrorSignalMixin,
     Model
 ):
 
@@ -91,8 +96,10 @@ class MyModel(
             'post_init',
             'pre_full_clean',
             'post_full_clean',
+            'post_full_clean_error',
             'pre_save',
             'post_save',
+            'post_save_error',
             'pre_delete',
             'post_delete',
             'm2m_changed',
@@ -132,6 +139,9 @@ class MyModel(
   original method in a backwards compatible way. However, make sure the order
   of the classes inherited from is the same as the above example to ensure the
   proper method resolution order.
+- The `post_full_clean_error` and `post_save_error` signals are not actually
+  called as signals, but the receiver methods are called directly. This allows
+  you to suppress, change or re-raise the error.
 
 ## Resources
 

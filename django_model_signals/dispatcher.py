@@ -1,18 +1,17 @@
 # Python standard library
 from functools import partial
 
-# Django Model Signals
-from django_model_signals.transceiver import ModelSignalsTransceiver
-
 
 class ModelSignalsDispatcher:
 
     @staticmethod
     def signal_method(signal_name, sender, **kwargs):
         if 'instance' in kwargs \
-            and isinstance(kwargs['instance'], ModelSignalsTransceiver):
-            getattr(kwargs['instance'], signal_name)(**kwargs)
-        elif issubclass(sender, ModelSignalsTransceiver):
+            and hasattr(kwargs['instance'], 'ModelSignalsMeta') \
+            and signal_name in kwargs['instance'].ModelSignalsMeta.signals:
+                getattr(kwargs['instance'], signal_name)(**kwargs)
+        elif hasattr(sender, 'ModelSignalsMeta') \
+            and signal_name in sender.ModelSignalsMeta.signals:
             getattr(sender, signal_name)(**kwargs)
 
     @classmethod

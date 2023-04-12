@@ -7,7 +7,6 @@ from django.apps import apps, AppConfig
 # Django Model Signals
 from django_model_signals.dispatcher import ModelSignalsDispatcher
 from django_model_signals.signals import MODEL_SIGNALS
-from django_model_signals.transceiver import ModelSignalsTransceiver
 
 
 class DjangoModelSignalsConfig(AppConfig):
@@ -21,11 +20,13 @@ class DjangoModelSignalsConfig(AppConfig):
 
         models = apps.get_models()
         for model in models:
-            if issubclass(model, ModelSignalsTransceiver):
+            if hasattr(model, 'ModelSignalsMeta'):
                 for signal_name, signal in MODEL_SIGNALS.items():
                     if signal_name in model.ModelSignalsMeta.signals:
                         signal.connect(
                             ModelSignalsDispatcher.get_signal_method(
                                 signal_name
-                            )
+                            ),
+                            sender=model,
+                            dispatch_uid=model.__name__ + '.' + signal_name
                         )
