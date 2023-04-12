@@ -38,6 +38,11 @@ signals you want to connect.
 ```python
 from django.db.models import Model
 from django_model_signals.manager import ModelSignalsManager
+from django_model_signals.models import (
+  FullCleanSignalsMixin,
+  PostSaveErrorSignalMixin
+)
+
 
 class MyModel(
     FullCleanSignalsMixin,
